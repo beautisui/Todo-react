@@ -33,11 +33,16 @@ class Tasks extends Component {
     const { items, changeStatus } = this.props;
     const tasks = items.map((item) => {
       return (
-        <Task key={item.itemId} {...item} changeStatus={changeStatus}></Task>
+        <Task
+          key={item.itemId}
+          {...item}
+          changeStatus={changeStatus}
+          className="task"
+        ></Task>
       );
     });
 
-    return <div>{tasks}</div>;
+    return <div className="tasks">{tasks}</div>;
   }
 }
 
