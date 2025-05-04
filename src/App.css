@@ -62,8 +62,14 @@ body {
   box-sizing: border-box;
 }
 
+.todo-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
 .todo-column {
   background: rgba(245, 199, 15, 0.387);
+  margin-right: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 12px;
@@ -104,4 +110,13 @@ body {
 
 h1 {
   text-align: center;
+}
+
+.task {
+  padding: 5px;
+  transition: text-decoration 0.2s;
+}
+
+.task:hover {
+  background-color: rgba(245, 199, 15, 0.9);
 }

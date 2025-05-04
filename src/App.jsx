@@ -8,22 +8,23 @@ class Task extends Component {
 
   render() {
     const { item, itemId, status, changeStatus } = this.props;
-    const checkbox = (
-      <input
-        type="checkbox"
-        checked={status}
-        onChange={() => changeStatus(itemId)}
-      />
-    );
+
+    const taskStyle = {
+      textDecoration: status ? "line-through" : "none",
+      cursor: "pointer",
+    };
 
     return (
-      <div>
-        {checkbox} {item}
+      <div
+        style={taskStyle}
+        onClick={() => changeStatus(itemId)}
+        className="task"
+      >
+        {item}
       </div>
     );
   }
 }
-
 class Tasks extends Component {
   constructor(props) {
     super(props);
@@ -166,22 +167,25 @@ class Todos extends Component {
       <div className="todos-board">
         <input
           type="text"
-          placeholder="Enter todo title and press Enter"
+          placeholder="Enter todo..."
           value={this.state.title}
           onChange={this.handleTitleChange}
           onKeyDown={this.handleCreateTodo}
         />
 
         <div className="todo-columns">
-          {this.state.todoLists.map((todo) => (
-            <Todo
-              key={todo.todoId}
-              todoId={todo.todoId}
-              title={todo.title}
-              items={todo.items}
-              onItemsChange={this.handleItemsChange}
-            />
-          ))}
+          {this.state.todoLists.map((todo) => {
+            const { todoId, title, items } = todo;
+            return (
+              <Todo
+                key={todoId}
+                todoId={todoId}
+                title={title}
+                items={items}
+                onItemsChange={this.handleItemsChange}
+              />
+            );
+          })}
         </div>
       </div>
     );
