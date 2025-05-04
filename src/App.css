@@ -41,12 +41,67 @@
   color: #888;
 }
 
+body {
+  font-family: sans-serif;
+  background-color: cornsilk;
+  padding: 20px;
+  margin: 0;
+}
+
+.todos-board {
+  max-width: 100%;
+}
+
+.todos-board > input[type="text"] {
+  padding: 8px 10px;
+  width: 300px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.todo-column {
+  background: rgba(245, 199, 15, 0.387);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  width: 220px;
+  box-sizing: border-box;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 10px;
+}
+
+.todo-column h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.todo-column input[type="text"] {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  outline: none;
+}
+
 .tasks {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  gap: 8px;
 }
 
 .task {
-  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+h1 {
+  text-align: center;
 }

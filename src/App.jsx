@@ -5,9 +5,9 @@ class Task extends Component {
   constructor(props) {
     super(props);
   }
+
   render() {
     const { item, itemId, status, changeStatus } = this.props;
-
     const checkbox = (
       <input
         type="checkbox"
@@ -46,90 +46,146 @@ class Tasks extends Component {
   }
 }
 
-class Input extends Component {
-  constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = { value: "" };
-  }
-
-  handleSubmit() {
-    if (this.state.value === "") return;
-
-    this.props.onSubmit(this.state.value);
-    this.setState({ value: "" });
-  }
-
-  handleChange(event) {
-    this.setState((prev) => {
-      return { ...prev, value: event.target.value };
-    });
-  }
-
-  render() {
-    return (
-      <div>
-        {" "}
-        <input
-          type="text"
-          placeholder="Enter Task"
-          value={this.state.value}
-          onChange={this.handleChange}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              this.handleSubmit();
-            }
-          }}
-        />
-      </div>
-    );
-  }
-}
-
 class Todo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: [{ item: "Shopping", itemId: 1, status: false }],
-      itemId: 2,
+      items: props.items || [],
+      itemId: 1,
+      inputValue: "",
     };
 
     this.changeStatus = this.changeStatus.bind(this);
     this.handleAddItem = this.handleAddItem.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
   changeStatus(id) {
-    this.setState((prev) => {
-      const updatedItems = prev.items.map((item) =>
-        item.itemId === id ? { ...item, status: !item.status } : item
-      );
-      return { items: updatedItems, itemId: prev.itemId };
+    const { todoId, onItemsChange } = this.props;
+    const updatedItems = this.state.items.map((item) =>
+      item.itemId === id ? { ...item, status: !item.status } : item
+    );
+
+    this.setState({ items: updatedItems }, () => {
+      onItemsChange(todoId, this.state.items);
     });
   }
 
   handleAddItem(value) {
-    this.setState((prev) => {
-      const newItem = {
-        item: value,
-        itemId: prev.itemId,
-        status: false,
-      };
-      return {
-        items: [...prev.items, newItem],
+    const { todoId, onItemsChange } = this.props;
+    const newItem = {
+      item: value,
+      itemId: this.state.itemId,
+      status: false,
+    };
+
+    const updatedItems = [...this.state.items, newItem];
+
+    this.setState(
+      (prev) => ({
+        items: updatedItems,
         itemId: prev.itemId + 1,
-      };
-    });
+        inputValue: "",
+      }),
+      () => {
+        onItemsChange(todoId, this.state.items);
+      }
+    );
+  }
+
+  handleInputChange(event) {
+    this.setState({ inputValue: event.target.value });
   }
 
   render() {
+    const { title } = this.props;
+
     return (
-      <div>
-        <Input onSubmit={this.handleAddItem} />
+      <div className="todo-column">
+        <h3>{title}</h3>
+        <input
+          type="text"
+          placeholder="Enter task"
+          value={this.state.inputValue}
+          onChange={this.handleInputChange}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && this.state.inputValue.trim()) {
+              this.handleAddItem(this.state.inputValue.trim());
+            }
+          }}
+        />
         <Tasks items={this.state.items} changeStatus={this.changeStatus} />
       </div>
     );
   }
 }
 
-export default Todo;
+class Todos extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: "",
+      nextTodoId: 1,
+      todoLists: [],
+    };
+
+    this.handleTitleChange = this.handleTitleChange.bind(this);
+    this.handleCreateTodo = this.handleCreateTodo.bind(this);
+    this.handleItemsChange = this.handleItemsChange.bind(this);
+  }
+
+  handleTitleChange(event) {
+    this.setState({ title: event.target.value });
+  }
+
+  handleCreateTodo(event) {
+    if (event.key === "Enter" && this.state.title.trim() !== "") {
+      const newTodo = {
+        todoId: this.state.nextTodoId,
+        title: this.state.title.trim(),
+        items: [],
+      };
+
+      this.setState((prev) => ({
+        todoLists: [...prev.todoLists, newTodo],
+        title: "",
+        nextTodoId: prev.nextTodoId + 1,
+      }));
+    }
+  }
+
+  handleItemsChange(todoId, updatedItems) {
+    const updatedTodoLists = this.state.todoLists.map((list) =>
+      list.todoId === todoId ? { ...list, items: updatedItems } : list
+    );
+    this.setState({ todoLists: updatedTodoLists });
+  }
+
+  render() {
+    return (
+      <div className="todos-board">
+        <input
+          type="text"
+          placeholder="Enter todo title and press Enter"
+          value={this.state.title}
+          onChange={this.handleTitleChange}
+          onKeyDown={this.handleCreateTodo}
+        />
+
+        <div className="todo-columns">
+          {this.state.todoLists.map((todo) => (
+            <Todo
+              key={todo.todoId}
+              todoId={todo.todoId}
+              title={todo.title}
+              items={todo.items}
+              onItemsChange={this.handleItemsChange}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+}
+
+export default Todos;
